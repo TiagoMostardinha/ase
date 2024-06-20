@@ -16,7 +16,7 @@ topics:
 	1. [[#Polling]]
 	2. [[#Interruptions]]
 	3. [[#DMA (Direct Memory  Access)]]
-2. Timers
+2. [[#Timers]]
 	1. General Purpose Timer
 	2. High Resolution Timer
 	3. RTC timer
@@ -72,6 +72,31 @@ topics:
 - **Disadvantages**
 	- Might introduce slight delays in handling the interrupt compared to polling continuously.
 ## DMA (Direct Memory  Access)
+- Data is sent using DMA and DMA Controller, which is only supported by hardware and does not involve the CPU.
+- During the data transfer, the DMA as the capability to control the address bus, the data bus and the control bus, because to transfer data it only needs to know:
+	- source address where it will read the data
+	- destination address where it will write the data
+	- and the size in bytes of the data
+- To transfer data, the most simple way, is to have a struct with content, # bytes/word that have been transferred and size of data to be transferred.
+- **Data Transfer**
+	1. DMAC ask for permission to be the bus master for the address,data and control bus
+	2. wait for permission granted from the CPU
+	3. while transfering:
+		1. read a byte/word from the source address to a internal register of the DMA
+		2. writes the data of the internal register into the destination address 
+		3. increments the # of bytes/word transferred
+		4. loop while # bytes/words != size
+	4. DMA remove the permission of the bus master and the buses and signal the CPU that they are free
+- **Advantages:**
+	- Reduces processor load significantly.
+- **Disadvantages:**
+	- Not suitable for all data transfer scenarios, particularly small data transfers.
+
+---
+# Timers
+- 
+
+---
 ---
 ## References
 1. https://docs.espressif.com/projects/esp-idf/en/stable/esp32c3/get-started/index.html

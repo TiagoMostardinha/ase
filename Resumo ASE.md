@@ -17,9 +17,9 @@ topics:
 	2. [[#Interruptions]]
 	3. [[#DMA (Direct Memory  Access)]]
 2. [[#Timers]]
-	1. General Purpose Timer
-	2. High Resolution Timer
-	3. RTC timer
+	1. [[#GPT (General Purpose Timer)]]
+	2. [[#HRT (High-Resolution Timer)]]
+	3. [[#RTC (Real-Time Clock)]]
 	4. Watchdogs
 3.  Peripheral
 	1. General Purpose Input/Output (GPIO)
@@ -94,8 +94,29 @@ topics:
 
 ---
 # Timers
-- 
+- A timer is a hardware or software component where it is designed for precise timing and control within embedded systems. However hardware timers are more precise than software, since it doesn't depend on delays from the Operating System.
+- Timers usually made with 3 components, a Count Register, a Comparator and a Reference Register.
+	- **Counter:** the counter will count the number of cycle or time units that has passed. It will reset when it overflows or the reset flag is High.
+	- **Comparator:** the comparator will compare 2 register where one of them is the time we want to achieve, and the other is output from the counter. When both register are equal it will send a High signal to the output.
+	- **Max Count Register (Reference Register):** This register stores the max value that the counter must achieve. After that, it will set to high the reset flag of the counter.
+- There are 3 type of timers within ESP32C3:
+	1. GPT (General Purpose Timer)
+	2. HRT (High-Resolution Timer)
+	3. RTC (Real-Time Clock)
+- Besides that there are Watchdogs Timers where it will be responsible to restart a program when there is a instruction that block the execution for a long time or when there is an exception.
 
+## GPT (General Purpose Timer)
+- GPTimers are 2 54-bits hardware timers, where with its driver we have a versatile set of functionalities for timing and control in your embedded systems.
+- The behavior when the internal counter of a timer reaches a specific target value is called a timer alarm.
+- When a timer alarms, a user registered per-timer callback would be called.
+- GPTs have a built-in **pre-scaler**. This allows you to divide the clock signal feeding the timer, effectively slowing down the counter's increment/decrement rate. This provides more control over timing precision for specific applications.
+- In ESP32 the Max Count Register is the Auto-Reload component.
+- **Functionalities:**
+	- Counting can be set to increment or decrement.
+	- Can be set to create a delay within the program, where the program will wait for the interrupt signal from the GPTimer.
+	- Creates periodic tasks in a continuous loop, triggering an interrupt at set intervals.
+	- Can be used to create PWM (Pulse Width Generation) which based on the duty cycle configured sends a signal with different periods on and off.
+## HRT (High-Resolution Timer)
 ---
 ---
 ## References

@@ -48,10 +48,21 @@ topics:
 	3. SD card Reader
 	4. Inversion of Logic Gate with MOSFETs
 ---
-# 1. Type of Data Transfer
+# Type of Data Transfer
 - Data Transfer is where you move data from internal components of the microcontroller itself, such as, moving data from registers of the CPU into or from the memory or peripherals.
 - Besides you can transfer data between components without CPU interaction as long as the data bus is free.
-- There are 3 type of data transfer essentially.
+- There are 3 type of data transfer essentially:
+	1. Polling
+	2. Interruptions
+	3. DMA (Direct Access Memory)
+## Polling
+- The CPU takes initiative, where it starts and controls the data transfer. 
+- In polling, the CPU actively check the status of a task or peripheral  to see if the expecting data is ready to be transferred. However while it's waiting for the peripheral to be ready, it will steal clock cycles where it could be used for execution of instructions.
+- Advantages:
+	- Simple, to implement it, we use continuously loops, checking a flag or register in the peripheral to see if it has data available.
+- Disadvantages:
+	- Can be inefficient for slow peripherals or frequent data transfers
+	- The processor wastes time constantly checking the peripheral, even if no data is ready. -> High Overhead
 
 ---
 ## References

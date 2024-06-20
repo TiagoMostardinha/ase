@@ -35,7 +35,8 @@ topics:
 	3. UART
 5. C
 	1. Type Of Variabes
-	2. Compilation
+	2. Stack and Heap
+	3. Compilation
 6. FreeRTOS
 	1. FreeRTOS
 	2. Power Management
@@ -116,10 +117,62 @@ topics:
 	- Can be set to create a delay within the program, where the program will wait for the interrupt signal from the GPTimer.
 	- Creates periodic tasks in a continuous loop, triggering an interrupt at set intervals.
 	- Can be used to create PWM (Pulse Width Generation) which based on the duty cycle configured sends a signal with different periods on and off.
+
 ## HRT (High-Resolution Timer)
----
+- The High-Resolution Timer (HRT) stands out as a powerful tool for applications demanding precise timing and rapid response times. Unlike GPTimer where accuracy and responsiveness are paramount. 
+- Ability to generate interrupts at high frequencies makes it ideal for real-time applications where quick responses are crucial.
+- It is has a counter of 64 bits which provides a more precise reading of the time.
+
+## RTC (Real-Time Clock)
+- Real-Time Clock (RTC) is a dedicated timer specifically designed to maintain accurate timekeeping even across various sleep modes and resets.
+- RTC in the ESP32C3 is a crucial component for maintaining accurate system time, especially in applications that involve sleep modes, resets, or require time-based functionalities.
+
 ---
 # Interfaces
+
+## I2C
+- I2C due to is simplicity is used in several types os applications like: 
+	- Sensores, ADCs and DACs
+	- External Memories of microcontrolores etc...
+- **Basic Characteristics**
+	- Bidirectional, half-duplex, byte oriented
+	- Master/Slave transfers 
+	- Master-transmitter or Master-receiver
+	- The communication bus only has 2 lines:
+		- Serial data line(SDA)
+		- Serial clock line(SCL)
+	- Each device is connected to the bus is addressable by software using a single address
+	- Addresses of 7 bits standard
+- **Terminology**
+	- **Transmitter:** device that sends data to the bus
+	- **Receiver:** device that receives data from the bus
+	- **Master:** device that starts the transfer, generates the clock signal and terminates the transfer
+	- **Slave:** device addressed by the Master
+	- **Multi-master:** multiple masters can try, at the same time, controlling the bus without corrupting the communications happening
+	- **Refereeing:**  procedure to assure that if several masters try to control the bus simultaneously, only one of them can is allowed to continue.
+	- **Synchronization:** procedure to synchronize the signals of the clocks of two or more devices
+- Master controls the SCL line, initiates the data transfer and the controls the addressing of other devices
+- Slave is addressed by the master and conditions the the SCL line
+- **Data Transfer**
+	- The transfer is 8 bit (byte)oriented being transmitted, firstly the MSB
+	- To initiate the transfer, the master:
+		- Sends a START(S)
+		- Next he sends the slave address(7 bit) and the qualification of the operation(RD/WR\)
+	- After the 8th bit (LSB), the addressed slave generates a ACK in the SDA, with a dominant bit(0)
+	- Then the transmitter sends a byte of data
+	- After the 8th bit (LSB), the receiver generates a ACK in the SDA, with a dominant bit(0)
+	- This cycle of 9 bits repeats itself after each byte of data that is transferred
+	- When the transfer is over the master sends a STOP
+- **Data transfer- write**- master is  the transmitter and the slave is the receiver(esta em cima a explicação)
+- **Data transfer- read** -master is the receiver, slave is the transmitter, the only difference is that in the end of the transfer the master sends NACK so the slave stops the transfer
+- **Multiple Master**
+	- Two or more masters can initiate the transmission in a free bus( after a STOP) at the same time
+	- It has to be predicted that the method of deciding which masters has control of the bus and completes the transmission- refereeing the access to the bus
+	- The master that looses the process of refereeing it removes itself and only tries to access it again when it is free again
+	- In the management of the bus is necessary:
+		-  Guarantees that the clocks of the masters are synchronized
+		-  The process that defines that the master that wins access to the bus, that controls the SDA line
+	- The synchronization is based in recessive bit
 
 ## SPI
 - Master-Slave architecture E2E, full-duplex, synchronous communication

@@ -13,9 +13,9 @@ topics:
 ---
 # Map Of Content
 1. [[#1. Type of Data Transfer|Type of Data Transfer]]
-	1. Polling
-	2. Interruptions
-	3. DMA (Direct Memory  Access)
+	1. [[#Polling]]
+	2. [[#Interruptions]]
+	3. [[#DMA (Direct Memory  Access)]]
 2. Timers
 	1. General Purpose Timer
 	2. High Resolution Timer
@@ -58,12 +58,20 @@ topics:
 ## Polling
 - The CPU takes initiative, where it starts and controls the data transfer. 
 - In polling, the CPU actively check the status of a task or peripheral  to see if the expecting data is ready to be transferred. However while it's waiting for the peripheral to be ready, it will steal clock cycles where it could be used for execution of instructions.
-- Advantages:
+- **Advantages**:
 	- Simple, to implement it, we use continuously loops, checking a flag or register in the peripheral to see if it has data available.
-- Disadvantages:
+- **Disadvantages**:
 	- Can be inefficient for slow peripherals or frequent data transfers
 	- The processor wastes time constantly checking the peripheral, even if no data is ready. -> High Overhead
-
+## Interruptions
+- In interruptions when the peripheral is ready to transfer data it will signal the CPU with a flag informing that the data in the peripheral is available.
+- When the flag for interruptions in the CPU is signaled, it will abandon temporarily the execution of the program and execute the code that the interrupt handler is pointing to.
+- The data transfer is made by the CPU but the busy waiting disappears, once it only occurs when the peripheral is ready.
+- **Advantages:**
+	- The CPU only spends time handling data transfer when necessary, improving overall performance.
+- **Disadvantages**
+	- Might introduce slight delays in handling the interrupt compared to polling continuously.
+## DMA (Direct Memory  Access)
 ---
 ## References
 1. https://docs.espressif.com/projects/esp-idf/en/stable/esp32c3/get-started/index.html

@@ -20,8 +20,8 @@ topics:
 	1. [[#GPT (General Purpose Timer)]]
 	2. [[#HRT (High-Resolution Timer)]]
 	3. [[#RTC (Real-Time Clock)]]
-	4. Watchdogs
-3.  Peripheral
+	4. [[#Watchdogs]]
+3.  [[#Peripherals]]
 	1. General Purpose Input/Output (GPIO)
 		- PWM
 	2. ADC (Analog-to-Digital Converter)
@@ -30,7 +30,7 @@ topics:
 		- Wi-Fi
 		- Bluetooth
 4. [[#Interfaces]]
-	1. I2C
+	1. [[#I2C]]
 	2. [[#SPI]]
 	3. UART
 5. C
@@ -127,6 +127,9 @@ topics:
 - Real-Time Clock (RTC) is a dedicated timer specifically designed to maintain accurate timekeeping even across various sleep modes and resets.
 - RTC in the ESP32C3 is a crucial component for maintaining accurate system time, especially in applications that involve sleep modes, resets, or require time-based functionalities.
 
+## Watchdogs
+- The Interrupt Watchdog is responsible for ensuring that ISRs (Interrupt Service Routines) are not blocked for a prolonged period of time. The TWDT is responsible for detecting instances of tasks running without yielding for a prolonged period.
+
 ---
 # Interfaces
 
@@ -201,6 +204,32 @@ topics:
 		- **Bidirectional**: Data exchanges in both ways
 		- **Master -> Slave (write):** Master transfers data to the slave, accepts/ignores the data
 		- **Slave -> Master (read):** masters wants to read the data of the slave, masters transfers to the slave irrelevant info and the slave accepts it or ignores it
+---
+# FreeRTOS
+## Symetric Multiprocessing
+- Symmetric multiprocessing is a computing architecture where two or more identical CPU cores are connected to a single shared main memory and controlled by a single operating system. In general, an SMP system:
+	- has multiple cores running independently. Each core has its own register file, interrupts, and interrupt handling.
+	- presents an identical view of memory to each core. Thus, a piece of code that accesses a particular memory address has the same effect regardless of which core it runs on.
+## Tasks
+- FreeRTOS provides the following functions to create a task:
+	- **Creation:**
+		- xTaskCreate() creates a task. The task's memory is dynamically allocated.
+		- xTaskCreateStatic() creates a task. The task's memory is statically allocated, i.e., provided by the user.
+		- xTaskCreatePinnedToCore() creates a task with a particular core affinity. The task's memory is dynamically allocated.
+		- xTaskCreateStaticPinnedToCore() creates a task with a particular core affinity. The task's memory is statically allocated, i.e., provided by the user
+	- **Execution**
+		- The anatomy of a task in IDF FreeRTOS is the same as in Vanilla FreeRTOS. More specifically, IDF FreeRTOS tasks:
+		- Can only be in one of the following states: Running, Ready, Blocked, or Suspended.
+		- Task functions are typically implemented as an infinite loop.
+		- Task functions should never return.
+	- **Deletion**
+		- the dual-core nature, there are some behavioral differences when calling vTaskDelete() in IDF FreeRTOS:
+			- When deleting a task that is currently running on the other core, a yield is triggered on the other core, and the task's memory is freed by one of the idle tasks.
+			- A deleted task's memory is freed immediately if it is not running on either core.
+	- **SMP Scheduler**
+		- Each task is given a constant priority upon creation. The scheduler executes the highest priority ready-state task.
+		- The scheduler can switch execution to another task without the cooperation of the currently running task.
+		- The scheduler periodically switches execution between ready-state tasks of the same priority in a round-robin fashion. Time slicing is governed by a tick interrupt
 
 ---
 ## References
